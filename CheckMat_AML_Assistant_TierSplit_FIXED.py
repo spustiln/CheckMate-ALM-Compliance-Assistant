@@ -70,7 +70,13 @@ if tx_file:
             st.write("**Flags:**", row["Flags_str"])
             suspicious = st.radio("Tier 1 Analyst - Suspicious?", ["No", "Yes"], key="tier1_decision")
 
-            tier1_actions = st.multiselect("Tier 1 Actions", ["Block transaction", "Place hold", "Escalate to Tier 2"], key="tier1_actions")
+            tier1_actions = st.multiselect("Tier 1 Actions", [
+                "Stop the transaction in question",
+                "Place temporary hold on sender account",
+                "Contact Account Owner for clarification",
+                "Monitor Only",
+                "Escalate to Tier 2"
+            ], key="tier1_actions")
 
             if "cases" not in st.session_state:
                 st.session_state.cases = []
@@ -120,3 +126,4 @@ if tx_file:
                         with open(temp_path, "rb") as f:
                             st.download_button("Download SAR Report", f, file_name=f"SAR_{selected['Case_ID']}.docx")
                     os.unlink(temp_path)
+
