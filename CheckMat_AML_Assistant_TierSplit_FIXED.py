@@ -3,8 +3,10 @@ import pandas as pd
 from datetime import date
 from docx import Document
 from io import BytesIO
+import tempfile
+import os
 
-st.set_page_config(page_title="CheckMat AML Assistant")
+st.set_page_config(page_title="CheckMate AML Assistant")
 st.title("♟️ CheckMate AML Assistant")
 
 # Role selection
@@ -52,7 +54,7 @@ if tx_file:
         st.header("🧑‍💼 Tier 1 Review")
         st.dataframe(flagged[["Case_ID", "ACCOUNT_ID", amount_col, "Flags_str"]])
 
-        sel_case = st.selectbox("Select Case ID", [""] + flagged["Case_ID"].tolist())
+        sel_case = st.selectbox("Select Case ID", ["" ] + flagged["Case_ID"].tolist())
 
         if sel_case:
             if 'last_case' not in st.session_state:
@@ -111,7 +113,10 @@ if tx_file:
                     doc.add_paragraph(f"Sender: {selected['Sender']}")
                     doc.add_paragraph(f"Amount: ${selected['Amount']}")
                     doc.add_paragraph("Tier 2 Approval: " + approve)
-                    sar_path = f"/mnt/data/SAR_{selected['Case_ID']}_Tier2.docx"
-                    doc.save(sar_path)
-                    with open(sar_path, "rb") as f:
-                        st.download_button("Download SAR Report", f, file_name=f"SAR_{selected['Case_ID']}.docx")
+
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
+                        temp_path = tmp.name
+                        doc.save(temp_path)
+                        with open(temp_path, "rb") as f:
+                            st.download_button("Download SAR Report", f, file_name=f"SAR_{selected['Case_ID']}.docx")
+                    os.unlink(temp_path)
