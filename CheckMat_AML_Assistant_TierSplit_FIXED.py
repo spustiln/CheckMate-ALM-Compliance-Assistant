@@ -5,7 +5,7 @@ from docx import Document
 from io import BytesIO
 
 st.set_page_config(page_title="CheckMat AML Assistant")
-st.title("♟️ CheckMat AML Assistant")
+st.title("♟️ CheckMate AML Assistant")
 
 # Role selection
 role = st.sidebar.selectbox("Select Role", ["Tier 1 Analyst", "Tier 2 Compliance Officer"])
