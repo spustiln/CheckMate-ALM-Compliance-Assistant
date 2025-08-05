@@ -83,7 +83,11 @@ if tx_file:
     if "COUNTER_PARTY_ACCOUNT_NUM" not in tx.columns:
         tx["COUNTER_PARTY_ACCOUNT_NUM"] = ""
 
-    tx["Case_ID"] = tx.get("TXN_STEP", 0).astype(str) + "-" + tx["TXN_ID"].astype(str)
+if "TXN_STEP" in tx.columns:
+    tx["Case_ID"] = tx["TXN_STEP"].astype(str) + "-" + tx["TXN_ID"].astype(str)
+else:
+    tx["Case_ID"] = tx["TXN_ID"].astype(str)
+
     tx["Flags"] = tx.apply(lambda r: ai_flag_reasons(r, amount_col, tx), axis=1)
     flagged = tx[tx["Flags"].map(len) > 0].copy()
     flagged["Flags_str"] = flagged["Flags"].map("; ".join)
