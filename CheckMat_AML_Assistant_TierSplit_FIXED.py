@@ -114,11 +114,33 @@ if tx_file:
 
                 if st.button("Generate SAR (Tier 2)"):
                     doc = Document()
-                    doc.add_heading(f"SAR – Case {selected['Case_ID']}", 0)
-                    doc.add_paragraph(f"Date: {date.today()}")
-                    doc.add_paragraph(f"Sender: {selected['Sender']}")
-                    doc.add_paragraph(f"Amount: ${selected['Amount']}")
-                    doc.add_paragraph("Tier 2 Approval: " + approve)
+                    doc.add_heading("Suspicious Activity Report (SAR)", 0)
+                    doc.add_paragraph(f"Report Date: {date.today()}")
+                    doc.add_paragraph(f"Case ID: {selected['Case_ID']}")
+
+                    doc.add_heading("Section I: Subject Information", level=1)
+                    doc.add_paragraph(f"Sender Account ID: {selected['Sender']}")
+                    doc.add_paragraph(f"Receiver Account ID: {selected['Receiver']}")
+                    doc.add_paragraph(f"Transaction Amount: ${selected['Amount']}")
+                    doc.add_paragraph("Country: US")
+                    doc.add_paragraph("Business Type: Individual")
+
+                    doc.add_heading("Section II: Suspicious Activity Details", level=1)
+                    doc.add_paragraph(f"Flagged Reasons: {selected['Reason']}")
+                    doc.add_paragraph("Typologies Suspected: Structuring, Layering, Possible Mule Activity")
+
+                    doc.add_heading("Section III: Narrative Explanation", level=1)
+                    doc.add_paragraph(
+                        f"The transaction was flagged due to: {selected['Reason']}. The analyst took the following actions: {selected['Action']}."
+                    )
+                    doc.add_paragraph(
+                        "Upon Tier 2 review, the activity is determined to warrant SAR filing. Additional monitoring and/or law enforcement coordination may be required."
+                    )
+
+                    doc.add_heading("Section IV: Reporting Details", level=1)
+                    doc.add_paragraph(f"Tier 2 Officer Decision: {approve}")
+                    doc.add_paragraph("Reporting Bank: CheckMate Simulated Bank")
+                    doc.add_paragraph("Analyst: Automated System + Reviewer")
 
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
                         temp_path = tmp.name
@@ -126,4 +148,3 @@ if tx_file:
                         with open(temp_path, "rb") as f:
                             st.download_button("Download SAR Report", f, file_name=f"SAR_{selected['Case_ID']}.docx")
                     os.unlink(temp_path)
-
